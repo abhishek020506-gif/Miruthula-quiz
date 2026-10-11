@@ -1,0 +1,276 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Little Quiz for Ammu 🤍</title>
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  font-family: "Trebuchet MS", system-ui, sans-serif;
+  color: #63344b;
+  background: linear-gradient(135deg, #ffe2ed, #fff7fb, #f9d9ec);
+}
+
+.card {
+  width: 100%;
+  max-width: 520px;
+  padding: 30px 23px;
+  text-align: center;
+  background: #ffffffed;
+  border: 1px solid #ffd0e0;
+  border-radius: 26px;
+  box-shadow: 0 15px 45px #b64c7620;
+}
+
+.heart { font-size: 35px; }
+
+.tag {
+  color: #c34e7d;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin: 12px 0;
+}
+
+h1 { font-size: 30px; margin: 8px 0; }
+h2 { font-size: 21px; line-height: 1.5; }
+
+.sub { color: #997487; line-height: 1.6; }
+
+.progress {
+  height: 7px;
+  background: #ffe4ee;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 25px 0;
+}
+
+#bar {
+  width: 20%;
+  height: 100%;
+  background: #f46f9d;
+  transition: width .3s;
+}
+
+#options { display: grid; gap: 11px; }
+
+.option, .next {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #ffc9dc;
+  border-radius: 15px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.option {
+  text-align: left;
+  background: #fff7fa;
+  color: #63344b;
+}
+
+.option:hover { background: #ffe8f1; }
+
+.option:disabled { opacity: .75; }
+
+#reaction {
+  display: none;
+  margin-top: 17px;
+  padding: 14px;
+  background: #fff0f6;
+  border-radius: 14px;
+  line-height: 1.6;
+}
+
+.next {
+  display: none;
+  margin-top: 18px;
+  background: #f46f9d;
+  border: 0;
+  color: white;
+  font-weight: bold;
+}
+
+.small {
+  color: #b78a9d;
+  font-size: 12px;
+  margin-top: 25px;
+}
+
+.ending { line-height: 1.9; font-size: 17px; }
+</style>
+</head>
+
+<body>
+<main class="card">
+  <div class="heart">💗</div>
+  <div class="tag">A LITTLE QUIZ, JUST FOR YOU</div>
+  <h1>Hey, Ammu 🤍</h1>
+  <p class="sub">
+    Five little questions. No pressure, no marks…
+    just a little smile, hopefully. 🌷
+  </p>
+
+  <div class="progress"><div id="bar"></div></div>
+
+  <section id="quiz">
+    <p id="number"></p>
+    <h2 id="question"></h2>
+    <div id="options"></div>
+    <div id="reaction"></div>
+    <button class="next" id="next">Next question 💕</button>
+  </section>
+
+  <div class="small">made with a little thought and lots of pink ✨</div>
+</main>
+
+<script>
+const questions = [
+{
+  q: "Who is the most prettiest and cutest girl on the planet 🪐",
+  options: [
+    "A) Miruthula",
+    "B) You",
+    "C) Muu",
+    "D) There is no one rather than you"
+  ],
+  reactions: [
+    "Interesting answer… the jury wants to reconsider 😂",
+    "Correct answer energy detected 💗",
+    "Muu? We need to investigate this case 🤨😂",
+    "Okay, somebody is definitely special 🥹🤍"
+  ]
+},
+{
+  q: "Who will be brighter than the Moon? 🌙",
+  options: [
+    "A) The answer to the 1st question",
+    "B) No one else, always YOU",
+    "C) Miruthula",
+    "D) A, B and C"
+  ],
+  reactions: [
+    "The Moon is filing a complaint for being outshined 😂🌙",
+    "Emotionally 100% accepted 🤍",
+    "Plot twist! 🌝",
+    "Diplomatic answer detected 😂💗"
+  ]
+},
+{
+  q: "Who loves Mutton Biriyani, Burger, Blackcurrant and Pomegranate? 🍔",
+  options: [
+    "A) You",
+    "B) My prettiest girl",
+    "C) The girl brighter than the Moon 🌙",
+    "D) All 3"
+  ],
+  reactions: [
+    "Food detective skills: questionable 😂",
+    "A very cute and hungry girl 🤍",
+    "Moonlight with a side of biryani 🌙",
+    "All correct! Now who's buying the biryani? 👀😂"
+  ]
+},
+{
+  q: "Why did I take only 5 questions in this quiz!? 😌",
+  options: [
+    "A) Want to see your smile instantly",
+    "B) A",
+    "C) Vera ena, un seekirama sirikka vekkanum",
+    "D) All 3"
+  ],
+  reactions: [
+    "That was the mission from the start 🥹💗",
+    "Option B is A wearing a disguise 😂",
+    "Mission: Ammu sirikka vekkanum 💕",
+    "Correct! Somebody understood the assignment 😌🤍"
+  ]
+},
+{
+  q: "The girl who is going to win and achieve all her goals in life… probability of achieving those goals? ✨",
+  options: [
+    "No need for options and percentages — nee kandippa pannuvaa, Ammu 🤍"
+  ],
+  reactions: [
+    "No percentage needed. I believe you can do it, Ammu. One step at a time. 🤍"
+  ]
+}
+];
+
+let current = 0;
+
+const questionEl = document.getElementById("question");
+const numberEl = document.getElementById("number");
+const optionsEl = document.getElementById("options");
+const reactionEl = document.getElementById("reaction");
+const nextEl = document.getElementById("next");
+const barEl = document.getElementById("bar");
+
+function renderQuestion() {
+  const item = questions[current];
+
+  numberEl.textContent =
+    `QUESTION ${current + 1} OF ${questions.length}`;
+  questionEl.textContent = item.q;
+  optionsEl.innerHTML = "";
+  reactionEl.style.display = "none";
+  nextEl.style.display = "none";
+  barEl.style.width = `${((current + 1) / questions.length) * 100}%`;
+
+  item.options.forEach((option, i) => {
+    const button = document.createElement("button");
+    button.className = "option";
+    button.textContent = option;
+    button.onclick = () => chooseAnswer(i);
+    optionsEl.appendChild(button);
+  });
+}
+
+function chooseAnswer(i) {
+  const item = questions[current];
+
+  document.querySelectorAll(".option").forEach(button => {
+    button.disabled = true;
+  });
+
+  reactionEl.textContent = item.reactions[i];
+  reactionEl.style.display = "block";
+  nextEl.textContent = current === questions.length - 1
+    ? "See your message 🤍"
+    : "Next question 💕";
+  nextEl.style.display = "block";
+}
+
+nextEl.onclick = () => {
+  if (current < questions.length - 1) {
+    current++;
+    renderQuestion();
+  } else {
+    document.getElementById("quiz").innerHTML = `
+      <div style="font-size:45px;margin:15px">🌷🤍✨</div>
+      <div class="tag">ONE LAST THING</div>
+      <h2>Hehe 😂💗 Quiz mudinjiduchu!</h2>
+      <p class="ending">
+        Unna sirikka vaikka mudiyuma nu therila…
+        aana un face-la oru chinna smile vara veikanum
+        nu dhaan indha quiz create pannen 🥹❤️
+      </p>
+      <p style="font-size:25px">💗</p>
+      <button class="next" style="display:block"
+        onclick="location.reload()">Play again 💕</button>
+    `;
+  }
+};
+
+renderQuestion();
+</script>
+</body>
+</html>
